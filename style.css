@@ -12,14 +12,14 @@ header > h1 {
 
 .grid-container {
   display: grid;
-  width: 70%;
-  margin: 0 auto;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 150px);
+  padding: 0 25%;
+  justify-content: center;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 5px;
 }
 
 .js-grid-item {
-  border: 1px solid black;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -35,4 +35,25 @@ header > h1 {
 
 .js-marked-o::after { 
   content: 'O';
+}
+
+@media screen and (min-width: 100px) and (max-width: 500px) {
+  .grid-container {
+    grid-template-columns: repeat(3, 70px);
+    grid-template-rows: repeat(3, 70px);
+  }
+}
+
+@media screen and (min-width: 1920px) and (max-width: 3840px) {
+  .grid-container {
+    grid-template-columns: repeat(3, 200px);
+    grid-template-rows: repeat(3, 200px);
+  }
+}
+
+@media screen and (min-width: 3840px) {
+  .grid-container {
+    grid-template-columns: repeat(3, 400px);
+    grid-template-rows: repeat(3, 400px);
+  }
 }
