@@ -5,7 +5,7 @@ header {
   margin-bottom: 100px;
 }
 
-header > h1 {
+h1 {
   text-align: center;
   font-family: 'Edu NSW ACT Foundation', cursive;
   font-size: 3.5rem;
@@ -67,6 +67,10 @@ header > h1 {
   padding: 5px 30px;
   justify-self: center;
   margin-top: 30px;
+}
+
+.winner-container h1 {
+  font-size: 2.5rem;
 }
 
 @media screen and (min-width: 100px) and (max-width: 500px) {

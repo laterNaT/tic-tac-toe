@@ -111,9 +111,12 @@ const gameFlow = (() => {
     } else {
       event.target.classList.add('js-marked-o');
     }
+
     if (decideWinner(gameBoard.board)) {
-      const winner = gameBoard.player1.isWinner ? gameBoard.player1 : gameBoard.player2;
-      console.log('winner is ' + winner.getName());
+      const player1 = gameBoard.player1;
+      const player2 = gameBoard.player2;
+      const winner = player1.isWinner() ? player1 : player2;
+      displayController.displayWinner(winner);
     }
     _currentPlayer = (_currentPlayer === 'x') ? 'o' : 'x';
   };
@@ -142,6 +145,7 @@ const displayController = (() => {
   const _formContainer = document.querySelector('.form-container');
   _gridContainer.style.visibility = 'hidden';
 
+  // create player objects from form data
   const form = document.getElementById('form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -153,4 +157,12 @@ const displayController = (() => {
     _formContainer.style.display = 'none';
     _gridContainer.style.visibility = 'visible';
   });
+
+  const displayWinner = (winner) => {
+    const winnerContainer = document.querySelector('.winner-container');
+    const winnerName = winner.getName();
+    winnerContainer.querySelector('h1').innerText = `${winnerName} wins!`;
+  };
+
+  return { displayWinner };
 })();
