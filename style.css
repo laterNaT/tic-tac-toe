@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Foundation&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Foundation&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Foundation&display=swap');
 
 header {
@@ -38,6 +38,35 @@ header > h1 {
 
 .js-marked-o::after { 
   content: 'O';
+}
+
+.form-container {
+  width: 400px;
+  margin: 0 auto;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 80px;
+}
+
+.form-container form {
+  display: grid;
+  grid-template-columns: 100px 200px;
+  row-gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-container form input {
+  border-radius: 5px;
+  border: 2px solid black;
+  padding: 5px;
+}
+
+.form-container form .btn {
+  grid-column: 1 / -1;
+  padding: 5px 30px;
+  justify-self: center;
+  margin-top: 30px;
 }
 
 @media screen and (min-width: 100px) and (max-width: 500px) {

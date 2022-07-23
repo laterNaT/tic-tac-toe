@@ -12,26 +12,12 @@ const Player = (name, marker) => {
   };
 };
 
-const player1 = Player('bob', 'x');
-const player2 = Player('joe', 'o');
-
 const gameBoard = (() => {
   const board = [...Array(3)].map(() => [...Array(3)]); // 3x3 array
-  // const _gridContainer = document.querySelector('.grid-container');
+  let player1 = null;
+  let player2 = null;
 
-  // create DOM elements
-  // for (let row = 0; row < board.length; row += 1) {
-  //   for (let col = 0; col < board[row].length; col += 1) {
-  //     const jsGridItem = document.createElement('button');
-  //     jsGridItem.classList.add('js-grid-item');
-  //     jsGridItem.dataset.colIndex = col.toString();
-  //     jsGridItem.dataset.rowIndex = row.toString();
-  //     jsGridItem.addEventListener('click', gameFlow.placeMarker);
-  //     _gridContainer.appendChild(jsGridItem);
-  //   }
-  // }
-
-  return { board };
+  return { board, player1, player2 };
 })();
 
 const gameFlow = (() => {
@@ -40,17 +26,17 @@ const gameFlow = (() => {
   const checkRows = (board) => {
     for (let row = 0; row < board.length; row += 1) {
       for (let col = 0; col < board[row].length; col += 1) {
-        if (player1.compareMarker(board[row][col])) {
-          player1.addScore();
-        } else if (player2.compareMarker(board[row][col])) {
-          player2.addScore();
+        if (gameBoard.player1.compareMarker(board[row][col])) {
+          gameBoard.player1.addScore();
+        } else if (gameBoard.player2.compareMarker(board[row][col])) {
+          gameBoard.player2.addScore();
         }
       }
-      if (player1.isWinner() || player2.isWinner()) {
+      if (gameBoard.player1.isWinner() || gameBoard.player2.isWinner()) {
         return true;
       }
-      player1.resetScore();
-      player2.resetScore();
+      gameBoard.player1.resetScore();
+      gameBoard.player2.resetScore();
     }
     return false;
   };
@@ -58,52 +44,52 @@ const gameFlow = (() => {
   const checkColumns = (board) => {
     for (let col = 0; col < board.length; col += 1) {
       for (let row = 0; row < board.length; row += 1) {
-        if (player1.compareMarker(board[row][col])) {
-          player1.addScore();
-        } else if (player2.compareMarker(board[row][col])) {
-          player2.addScore();
+        if (gameBoard.player1.compareMarker(board[row][col])) {
+          gameBoard.player1.addScore();
+        } else if (gameBoard.player2.compareMarker(board[row][col])) {
+          gameBoard.player2.addScore();
         }
       }
-      if (player1.isWinner() || player2.isWinner()) {
+      if (gameBoard.player1.isWinner() || gameBoard.player2.isWinner()) {
         return true;
       }
-      player1.resetScore();
-      player2.resetScore();
+      gameBoard.player1.resetScore();
+      gameBoard.player2.resetScore();
     }
     return false;
   };
 
   const checkDiagonal = (board) => {
     for (let i = 0; i < board.length; i += 1) {
-      if (player1.compareMarker(board[i][i])) {
-        player1.addScore();
-      } else if (player2.compareMarker(board[i][i])) {
-        player2.addScore();
+      if (gameBoard.player1.compareMarker(board[i][i])) {
+        gameBoard.player1.addScore();
+      } else if (gameBoard.player2.compareMarker(board[i][i])) {
+        gameBoard.player2.addScore();
       }
     }
-    if (player1.isWinner() || player2.isWinner()) {
+    if (gameBoard.player1.isWinner() || gameBoard.player2.isWinner()) {
       return true;
     }
-    player1.resetScore();
-    player2.resetScore();
+    gameBoard.player1.resetScore();
+    gameBoard.player2.resetScore();
     return false;
   };
 
   const checkAntiDiagonal = (board) => {
     let row = 0;
     for (let col = board.length - 1; col >= 0; col -= 1) {
-      if (player1.compareMarker(board[row][col])) {
-        player1.addScore();
-      } else if (player2.compareMarker(board[row][col])) {
-        player2.addScore();
+      if (gameBoard.player1.compareMarker(board[row][col])) {
+        gameBoard.player1.addScore();
+      } else if (gameBoard.player2.compareMarker(board[row][col])) {
+        gameBoard.player2.addScore();
       }
       row += 1;
     }
-    if (player1.isWinner() || player2.isWinner()) {
+    if (gameBoard.player1.isWinner() || gameBoard.player2.isWinner()) {
       return true;
     }
-    player1.resetScore();
-    player2.resetScore();
+    gameBoard.player1.resetScore();
+    gameBoard.player2.resetScore();
     return false;
   };
 
@@ -126,25 +112,45 @@ const gameFlow = (() => {
       event.target.classList.add('js-marked-o');
     }
     if (decideWinner(gameBoard.board)) {
-      console.log('winner');
-    } else {
-      console.log('no winner');
+      const winner = gameBoard.player1.isWinner ? gameBoard.player1 : gameBoard.player2;
+      console.log('winner is ' + winner.getName());
     }
     _currentPlayer = (_currentPlayer === 'x') ? 'o' : 'x';
   };
 
   // create DOM elements
-  const _gridContainer = document.querySelector('.grid-container');
-  for (let row = 0; row < gameBoard.board.length; row += 1) {
-    for (let col = 0; col < gameBoard.board[row].length; col += 1) {
-      const jsGridItem = document.createElement('button');
-      jsGridItem.classList.add('js-grid-item');
-      jsGridItem.dataset.colIndex = col.toString();
-      jsGridItem.dataset.rowIndex = row.toString();
-      jsGridItem.addEventListener('click', placeMarker);
-      _gridContainer.appendChild(jsGridItem);
+  (function createGrid() {
+    const _gridContainer = document.querySelector('.grid-container');
+    for (let row = 0; row < gameBoard.board.length; row += 1) {
+      for (let col = 0; col < gameBoard.board[row].length; col += 1) {
+        const jsGridItem = document.createElement('button');
+        jsGridItem.classList.add('js-grid-item');
+        jsGridItem.dataset.colIndex = col.toString();
+        jsGridItem.dataset.rowIndex = row.toString();
+        jsGridItem.addEventListener('click', placeMarker);
+        _gridContainer.appendChild(jsGridItem);
+      }
     }
-  }
+  }());
 
   return { placeMarker };
+})();
+
+const displayController = (() => {
+  // hide grid before both players input their name
+  const _gridContainer = document.querySelector('.grid-container');
+  const _formContainer = document.querySelector('.form-container');
+  _gridContainer.style.visibility = 'hidden';
+
+  const form = document.getElementById('form');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const playerX = formData.get('player-x');
+    const playerO = formData.get('player-o');
+    gameBoard.player1 = Player(playerX, 'x');
+    gameBoard.player2 = Player(playerO, 'o');
+    _formContainer.style.display = 'none';
+    _gridContainer.style.visibility = 'visible';
+  });
 })();
