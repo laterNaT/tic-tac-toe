@@ -14,15 +14,20 @@ const Player = (name, marker) => {
 
 const gameBoard = (() => {
   const board = [...Array(3)].map(() => [...Array(3)]); // 3x3 array
+  const _length = 9;
+  const getLength = () => _length;
   let player1 = null;
   let player2 = null;
 
-  return { board, player1, player2 };
+  return {
+    board, player1, player2, getLength,
+  };
 })();
 
 const gameFlow = (() => {
   let _currentPlayer = 'x';
   let _gameIsOver = false;
+  let _totalMoves = 0;
 
   const checkRows = (board) => {
     for (let row = 0; row < board.length; row += 1) {
@@ -113,6 +118,12 @@ const gameFlow = (() => {
       event.target.classList.add('js-marked-o');
     }
 
+    _totalMoves += 1;
+    if (_totalMoves >= gameBoard.getLength()) {
+      displayController.displayTie();
+      return;
+    }
+
     if (decideWinner(gameBoard.board)) {
       _gameIsOver = true;
       const player1 = gameBoard.player1;
@@ -166,5 +177,10 @@ const displayController = (() => {
     winnerContainer.querySelector('h1').innerText = `${winnerName} wins!`;
   };
 
-  return { displayWinner };
+  const displayTie = () => {
+    const winnerContainer = document.querySelector('.winner-container');
+    winnerContainer.querySelector('h1').innerText = 'It\'s a tie!';
+  };
+
+  return { displayWinner, displayTie };
 })();
