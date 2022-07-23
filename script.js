@@ -171,16 +171,25 @@ const displayController = (() => {
     _gridContainer.style.visibility = 'visible';
   });
 
+  const addRestartBtn = () => {
+    const restartBtn = document.createElement('button');
+    restartBtn.classList.add('btn', 'restart-btn');
+    restartBtn.innerText = 'Restart game';
+    _gridContainer.appendChild(restartBtn);
+  };
+
   const displayWinner = (winner) => {
     const winnerContainer = document.querySelector('.winner-container');
     const winnerName = winner.getName();
     winnerContainer.querySelector('h1').innerText = `${winnerName} wins!`;
+    addRestartBtn();
   };
 
   const displayTie = () => {
     const winnerContainer = document.querySelector('.winner-container');
     winnerContainer.querySelector('h1').innerText = 'It\'s a tie!';
+    addRestartBtn();
   };
 
-  return { displayWinner, displayTie };
+  return { displayWinner, displayTie, addRestartBtn };
 })();
