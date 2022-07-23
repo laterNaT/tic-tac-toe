@@ -22,6 +22,7 @@ const gameBoard = (() => {
 
 const gameFlow = (() => {
   let _currentPlayer = 'x';
+  let _gameIsOver = false;
 
   const checkRows = (board) => {
     for (let row = 0; row < board.length; row += 1) {
@@ -99,7 +100,7 @@ const gameFlow = (() => {
    || checkAntiDiagonal(board);
 
   const placeMarker = (event) => {
-    if (event.target.classList.contains('js-marked')) {
+    if (event.target.classList.contains('js-marked') || _gameIsOver) {
       return;
     }
 
@@ -113,6 +114,7 @@ const gameFlow = (() => {
     }
 
     if (decideWinner(gameBoard.board)) {
+      _gameIsOver = true;
       const player1 = gameBoard.player1;
       const player2 = gameBoard.player2;
       const winner = player1.isWinner() ? player1 : player2;
