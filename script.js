@@ -13,14 +13,17 @@ const Player = (name, marker) => {
 };
 
 const gameBoard = (() => {
-  const board = [...Array(3)].map(() => [...Array(3)]); // 3x3 array
+  let _board = [...Array(3)].map(() => [...Array(3)]); // 3x3 array
+  const getBoard = () => _board;
+  const newBoard = () => [...Array(3)].map(() => [...Array(3)]);
+  const setBoard = (board) => { _board = board; };
   const _length = 9;
   const getLength = () => _length;
   let player1 = null;
   let player2 = null;
 
   return {
-    board, player1, player2, getLength,
+    getBoard, setBoard, newBoard, player1, player2, getLength,
   };
 })();
 
@@ -28,6 +31,10 @@ const gameFlow = (() => {
   let _currentPlayer = 'x';
   let _gameIsOver = false;
   let _totalMoves = 0;
+  const restartGame = () => {
+    _gameIsOver = false;
+    _totalMoves = 0;
+  };
 
   const checkRows = (board) => {
     for (let row = 0; row < board.length; row += 1) {
@@ -110,7 +117,9 @@ const gameFlow = (() => {
     }
 
     const { rowIndex, colIndex } = event.target.dataset;
-    gameBoard.board[rowIndex][colIndex] = _currentPlayer;
+    const board = gameBoard.getBoard();
+
+    board[rowIndex][colIndex] = _currentPlayer;
     event.target.classList.add('js-marked');
     if (_currentPlayer === 'x') {
       event.target.classList.add('js-marked-x');
@@ -124,7 +133,7 @@ const gameFlow = (() => {
       return;
     }
 
-    if (decideWinner(gameBoard.board)) {
+    if (decideWinner(board)) {
       _gameIsOver = true;
       const player1 = gameBoard.player1;
       const player2 = gameBoard.player2;
@@ -134,22 +143,7 @@ const gameFlow = (() => {
     _currentPlayer = (_currentPlayer === 'x') ? 'o' : 'x';
   };
 
-  // create DOM elements
-  (function createGrid() {
-    const _gridContainer = document.querySelector('.grid-container');
-    for (let row = 0; row < gameBoard.board.length; row += 1) {
-      for (let col = 0; col < gameBoard.board[row].length; col += 1) {
-        const jsGridItem = document.createElement('button');
-        jsGridItem.classList.add('js-grid-item');
-        jsGridItem.dataset.colIndex = col.toString();
-        jsGridItem.dataset.rowIndex = row.toString();
-        jsGridItem.addEventListener('click', placeMarker);
-        _gridContainer.appendChild(jsGridItem);
-      }
-    }
-  }());
-
-  return { placeMarker };
+  return { placeMarker, restartGame };
 })();
 
 const displayController = (() => {
@@ -171,10 +165,42 @@ const displayController = (() => {
     _gridContainer.style.visibility = 'visible';
   });
 
+  const createGrid = () => {
+    _gridContainer.replaceChildren(); // clear board
+    const board = gameBoard.getBoard();
+    for (let row = 0; row < board.length; row += 1) {
+      for (let col = 0; col < board[row].length; col += 1) {
+        const jsGridItem = document.createElement('button');
+        jsGridItem.classList.add('js-grid-item');
+        jsGridItem.dataset.colIndex = col.toString();
+        jsGridItem.dataset.rowIndex = row.toString();
+        jsGridItem.addEventListener('click', gameFlow.placeMarker, { once: true });
+        _gridContainer.appendChild(jsGridItem);
+      }
+    }
+  };
+
   const addRestartBtn = () => {
     const restartBtn = document.createElement('button');
     restartBtn.classList.add('btn', 'restart-btn');
     restartBtn.innerText = 'Restart game';
+    restartBtn.addEventListener('click', () => {
+      // reset array
+      gameBoard.setBoard(gameBoard.newBoard());
+
+      // reset DOM
+      createGrid();
+
+      // reset score
+      gameBoard.player1.resetScore();
+      gameBoard.player2.resetScore();
+
+      // reset game data
+      gameFlow.restartGame();
+
+      // reset winner/tie text
+      document.querySelector('.winner-container > h1').innerText = '';
+    });
     _gridContainer.appendChild(restartBtn);
   };
 
@@ -191,5 +217,9 @@ const displayController = (() => {
     addRestartBtn();
   };
 
-  return { displayWinner, displayTie, addRestartBtn };
+  return {
+    createGrid, displayWinner, displayTie, addRestartBtn,
+  };
 })();
+
+displayController.createGrid();
