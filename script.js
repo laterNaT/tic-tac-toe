@@ -19,8 +19,8 @@ const gameBoard = (() => {
   const setBoard = (board) => { _board = board; };
   const _length = 9;
   const getLength = () => _length;
-  let player1 = null;
-  let player2 = null;
+  const player1 = null;
+  const player2 = null;
 
   return {
     getBoard, setBoard, newBoard, player1, player2, getLength,
@@ -31,10 +31,18 @@ const gameFlow = (() => {
   let _currentPlayer = 'x';
   let _gameIsOver = false;
   let _totalMoves = 0;
+
   const restartGame = () => {
     _gameIsOver = false;
     _totalMoves = 0;
   };
+
+  const resetScores = () => {
+    gameBoard.player1.resetScore();
+    gameBoard.player2.resetScore();
+  };
+
+  const foundWinner = () => gameBoard.player1.isWinner() || gameBoard.player2.isWinner();
 
   const checkRows = (board) => {
     for (let row = 0; row < board.length; row += 1) {
@@ -45,11 +53,10 @@ const gameFlow = (() => {
           gameBoard.player2.addScore();
         }
       }
-      if (gameBoard.player1.isWinner() || gameBoard.player2.isWinner()) {
+      if (foundWinner()) {
         return true;
       }
-      gameBoard.player1.resetScore();
-      gameBoard.player2.resetScore();
+      resetScores();
     }
     return false;
   };
@@ -63,11 +70,10 @@ const gameFlow = (() => {
           gameBoard.player2.addScore();
         }
       }
-      if (gameBoard.player1.isWinner() || gameBoard.player2.isWinner()) {
+      if (foundWinner()) {
         return true;
       }
-      gameBoard.player1.resetScore();
-      gameBoard.player2.resetScore();
+      resetScores();
     }
     return false;
   };
@@ -80,11 +86,10 @@ const gameFlow = (() => {
         gameBoard.player2.addScore();
       }
     }
-    if (gameBoard.player1.isWinner() || gameBoard.player2.isWinner()) {
+    if (foundWinner()) {
       return true;
     }
-    gameBoard.player1.resetScore();
-    gameBoard.player2.resetScore();
+    resetScores();
     return false;
   };
 
@@ -98,11 +103,10 @@ const gameFlow = (() => {
       }
       row += 1;
     }
-    if (gameBoard.player1.isWinner() || gameBoard.player2.isWinner()) {
+    if (foundWinner()) {
       return true;
     }
-    gameBoard.player1.resetScore();
-    gameBoard.player2.resetScore();
+    resetScores();
     return false;
   };
 
@@ -135,9 +139,7 @@ const gameFlow = (() => {
 
     if (decideWinner(board)) {
       _gameIsOver = true;
-      const player1 = gameBoard.player1;
-      const player2 = gameBoard.player2;
-      const winner = player1.isWinner() ? player1 : player2;
+      const winner = gameBoard.player1.isWinner() ? gameBoard.player1 : gameBoard.player2;
       displayController.displayWinner(winner);
     }
     _currentPlayer = (_currentPlayer === 'x') ? 'o' : 'x';
